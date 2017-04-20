@@ -53,7 +53,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             del loss
             del x
             del t
-        print(sum_loss)
+        print('train loss sum: ', sum_loss)
 
         order = np.random.permutation(test_n)
         test_iter_x = Iterator(test_x, batch_size, order=order)
@@ -69,6 +69,6 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             sum_loss += loss.data * len(x)
             # acc = F.accuracy(y, t)
             # print(acc.data)
-        print(sum_loss)
+        print('test loss sum: ', sum_loss)
 
 fire.Fire()
