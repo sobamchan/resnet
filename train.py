@@ -48,6 +48,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             loss.backward()
             optimizer.update()
 
+        order = np.random.permutation(test_n)
         test_iter_x = Iterator(test_x, batch_size, order=order)
         test_iter_t = Iterator(test_t, batch_size, order=order)
         print('test starting')
