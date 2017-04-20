@@ -40,6 +40,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
         order = np.random.permutation(train_n)
         train_iter_x = Iterator(train_x, batch_size, order=order)
         train_iter_t = Iterator(train_t, batch_size, order=order)
+        sum_loss = 0
         for x, t in tqdm(zip(train_iter_x, train_iter_t), total=train_n/batch_size):
             x = model.prepare_input(x, dtype=xp.float32, xp=xp)
             t = model.prepare_input(t, dtype=xp.int32, xp=xp)
@@ -47,21 +48,27 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             loss = model(x, t)
             loss.backward()
             optimizer.update()
+            loss.to_cpu()
+            sum_loss += loss.data * len(x)
+            del loss
+            del x
+            del t
+        print(sum_loss)
 
         order = np.random.permutation(test_n)
         test_iter_x = Iterator(test_x, batch_size, order=order)
         test_iter_t = Iterator(test_t, batch_size, order=order)
         print('test starting')
+        sum_loss = 0
         for x, t in tqdm(zip(test_iter_x, test_iter_t), total=test_n/batch_size):
             x = model.prepare_input(x, dtype=xp.float32, xp=xp)
             t = model.prepare_input(t, dtype=xp.int32, xp=xp)
             model.cleargrads()
-            y = model.fwd(x, train=False)
-            acc = F.accuracy(y, t)
-            print(acc.data)
-            
-        
-
-
+            loss = model(x, t, train=False)
+            loss.to_cpu()
+            sum_loss += loss.data * len(x)
+            # acc = F.accuracy(y, t)
+            # print(acc.data)
+        print(sum_loss)
 
 fire.Fire()
