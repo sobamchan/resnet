@@ -91,15 +91,18 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
         xx = range(0, len(yy))
         plt.plot(xx, yy)
         plt.savefig('./train_losses.png')
+        plt.clf()
 
         yy = test_losses
         xx = range(0, len(yy))
         plt.plot(xx, yy)
+        plt.clf()
         plt.savefig('./test_losses.png')
 
         yy = test_accs
         xx = range(0, len(yy))
         plt.plot(xx, yy)
+        plt.clf()
         plt.savefig('./test_acc.png')
 
 fire.Fire()
