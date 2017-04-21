@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm
 from model import PlainCNN
 import chainer
+from chainer import computational_graph
 from chainer import optimizers
 import chainer.functions as F
 
@@ -62,9 +63,16 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             optimizer.update()
             loss.to_cpu()
             sum_loss += loss.data * len(x)
-            del loss
             del x
             del t
+        if i == 0:
+            with open('graph.dot', 'w') as o:
+                g = computational_graph.build_computational_graph(
+                    (loss, ), remove_split=True)
+                o.write(g.dump())
+            print('graph generated')
+
+        del loss
         avg_loss = sum_loss / train_n
         train_losses.append(avg_loss)
 
