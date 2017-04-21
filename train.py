@@ -5,12 +5,14 @@ from model import PlainCNN
 import chainer
 from chainer import optimizers
 import chainer.functions as F
-import matplotlib.pyplot as plt
+
 import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
 
 from sobamchan.sobamchan_iterator import Iterator
 
-matplotlib.use('Agg')
 
 model = PlainCNN()
 
