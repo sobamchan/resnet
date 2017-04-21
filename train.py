@@ -56,6 +56,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
         if i % 10 == 0:
             optimizer.lr /= 2
         for x, t in tqdm(zip(train_iter_x, train_iter_t), total=train_n/batch_size):
+            x_len = len(x)
             x = model.prepare_input(x, dtype=xp.float32, xp=xp)
             t = model.prepare_input(t, dtype=xp.int32, xp=xp)
             model.cleargrads()
@@ -63,7 +64,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             loss.backward()
             optimizer.update()
             loss.to_cpu()
-            sum_loss += loss.data * len(x)
+            sum_loss += loss.data * len(x_len)
             del x
             del t
         if i == 0:
@@ -82,14 +83,15 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
         sum_loss = 0
         sum_acc = 0
         for x, t in tqdm(zip(test_iter_x, test_iter_t), total=test_n/batch_size):
+            x_len = len(x)
             x = model.prepare_input(x, dtype=xp.float32, xp=xp)
             t = model.prepare_input(t, dtype=xp.int32, xp=xp)
             model.cleargrads()
             loss, acc = model(x, t, train=False)
             loss.to_cpu()
             acc.to_cpu()
-            sum_loss += loss.data * len(x)
-            sum_acc = acc.data * len(x)
+            sum_loss += loss.data * len(x_len)
+            sum_acc = acc.data * len(x_len)
         test_loss_log.add(sum_loss/test_n)
         test_acc_log.add(sum_acc/test_n)
 
