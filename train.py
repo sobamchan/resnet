@@ -1,7 +1,7 @@
 import fire
 import numpy as np
 from tqdm import tqdm
-from model import PlainCNN
+from plain_cnn import PlainCNN
 import chainer
 from chainer import computational_graph
 from chainer import optimizers
@@ -91,7 +91,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             loss.to_cpu()
             acc.to_cpu()
             sum_loss += loss.data * x_len
-            sum_acc = acc.data * x_len
+            sum_acc += acc.data * x_len
         test_loss_log.add(sum_loss/test_n)
         test_acc_log.add(sum_acc/test_n)
 
