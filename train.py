@@ -6,8 +6,11 @@ import chainer
 from chainer import optimizers
 import chainer.functions as F
 import matplotlib.pyplot as plt
+import matplotlib
 
 from sobamchan.sobamchan_iterator import Iterator
+
+matplotlib.use('Agg')
 
 model = PlainCNN()
 
