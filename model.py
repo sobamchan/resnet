@@ -41,7 +41,7 @@ class PlainCNN(sobamchan_chainer.Model):
 
     def __call__(self, x, t, train=True):
         y = self.fwd(x, train)
-        return F.softmax_cross_entropy(y, t)
+        return F.softmax_cross_entropy(y, t), F.accuracy(y, t)
 
     def fwd(self, x, train=True):
         # convs and bns
