@@ -96,7 +96,10 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
         test_acc_log.add(sum_acc/test_n)
 
     train_log.save('train.log')
+    train_log.save_graph('train.log.png')
     test_loss_log.save('test_loss.log')
+    test_loss_log.save_graph('test_loss.log.png')
     test_acc_log.save('test_acc.log')
+    test_acc_log.save_graph('test_acc.log.png')
 
 fire.Fire()
