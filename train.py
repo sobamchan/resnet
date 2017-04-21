@@ -64,7 +64,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             loss.backward()
             optimizer.update()
             loss.to_cpu()
-            sum_loss += loss.data * len(x_len)
+            sum_loss += loss.data * x_len
             del x
             del t
         if i == 0:
@@ -90,8 +90,8 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             loss, acc = model(x, t, train=False)
             loss.to_cpu()
             acc.to_cpu()
-            sum_loss += loss.data * len(x_len)
-            sum_acc = acc.data * len(x_len)
+            sum_loss += loss.data * x_len
+            sum_acc = acc.data * x_len
         test_loss_log.add(sum_loss/test_n)
         test_acc_log.add(sum_acc/test_n)
 
