@@ -13,6 +13,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from sobamchan.sobamchan_iterator import Iterator
+from sobamchan.sobamchan_log import Log
 
 
 model = PlainCNN()
@@ -44,9 +45,9 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
     optimizer.add_hook(chainer.optimizer.WeightDecay(.05))
     optimizer.add_hook(chainer.optimizer.GradientClipping(.0005))
 
-    train_losses = []
-    test_losses = []
-    test_accs = []
+    train_log = Log()
+    test_loss_log = Log()
+    test_acc_log = Log()
     for i in tqdm(range(epoch)):
         order = np.random.permutation(train_n)
         train_iter_x = Iterator(train_x, batch_size, order=order)
@@ -73,8 +74,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             print('graph generated')
 
         del loss
-        avg_loss = sum_loss / train_n
-        train_losses.append(avg_loss)
+        train_log.add(sum_loss/train_n)
 
         order = np.random.permutation(test_n)
         test_iter_x = Iterator(test_x, batch_size, order=order)
@@ -90,27 +90,11 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             acc.to_cpu()
             sum_loss += loss.data * len(x)
             sum_acc = acc.data * len(x)
-        avg_loss = sum_loss / test_n
-        test_losses.append(avg_loss)
-        avg_acc = sum_acc / test_n
-        test_accs.append(avg_acc)
+        test_loss_log.add(sum_loss/test_n)
+        test_acc_log.add(sum_acc/test_n)
 
-        yy = train_losses
-        xx = range(0, len(yy))
-        plt.plot(xx, yy)
-        plt.savefig('./train_losses.png')
-        plt.clf()
-
-        yy = test_losses
-        xx = range(0, len(yy))
-        plt.plot(xx, yy)
-        plt.clf()
-        plt.savefig('./test_losses.png')
-
-        yy = test_accs
-        xx = range(0, len(yy))
-        plt.plot(xx, yy)
-        plt.clf()
-        plt.savefig('./test_acc.png')
+    train_log.save('train.log')
+    test_loss_log.save('test_loss.log')
+    test_acc_log.save('test_acc.log')
 
 fire.Fire()
