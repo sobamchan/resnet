@@ -4,6 +4,7 @@ from sobamchan import sobamchan_chainer
 import chainer.links as L
 import chainer.functions as F
 from chainer import Variable
+from chainer import flag
 
 class ResBlock(sobamchan_chainer.Model):
 
@@ -26,7 +27,7 @@ class ResBlock(sobamchan_chainer.Model):
         _, x_channels, x_h, x_w = x.shape
         h_batch_size, h_channels, h_h, h_w = h.shape
         if x_channels != h_channels:
-            pad = chainer.Variable(np.zeros((h_batch_size, h_channels - x_channels, h_h, h_w)).astype(np.float32))
+            pad = Variable(np.zeros((h_batch_size, h_channels - x_channels, h_h, h_w)).astype(np.float32), volatile=flag.OFF)
             if np.ndarray is not type(h.data):
                 pad.to_gpu()
             x = F.concat((x, pad))
