@@ -3,3 +3,4 @@ __pycache__
 *.png
 *.dot
 *.json
+.ipynb_checkpoints

@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm
 from plain_cnn import PlainCNN
 from mlp import MLP
+from resnet import ResNet
 import chainer
 from chainer import computational_graph
 from chainer import optimizers
@@ -21,6 +22,7 @@ slack = Slack()
 
 model = PlainCNN()
 model = MLP()
+model = ResNet()
 
 def train(model=model, gpu=None, epoch=10, batch_size=128):
     train, test = chainer.datasets.cifar.get_cifar10()
