@@ -2,6 +2,7 @@ import fire
 import numpy as np
 from tqdm import tqdm
 from plain_cnn import PlainCNN
+from mlp import MLP
 import chainer
 from chainer import computational_graph
 from chainer import optimizers
@@ -14,9 +15,12 @@ import matplotlib.pyplot as plt
 
 from sobamchan.sobamchan_iterator import Iterator
 from sobamchan.sobamchan_log import Log
+from sobamchan.sobamchan_slack import Slack
+slack = Slack()
 
 
 model = PlainCNN()
+model = MLP()
 
 def train(model=model, gpu=None, epoch=10, batch_size=128):
     train, test = chainer.datasets.cifar.get_cifar10()
@@ -91,7 +95,9 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             loss.to_cpu()
             acc.to_cpu()
             sum_loss += loss.data * x_len
-            sum_acc += acc.data * x_len
+            sum_acc += float(acc.data) * x_len
+        slack.s_print('acc: {}'.format(sum_acc/test_n), channel='output')
+        slack.s_print('loss: {}'.format(sum_loss/test_n), channel='output')
         test_loss_log.add(sum_loss/test_n)
         test_acc_log.add(sum_acc/test_n)
 

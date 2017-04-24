@@ -47,8 +47,8 @@ class PlainCNN(sobamchan_chainer.Model):
         # convs and bns
         for i in range(1, self.layer_n-1):
             x = self['conv_{}'.format(i)](x)
-            x = F.relu(x)
             x = self['bnorm_{}'.format(i)](x)
+            x = F.relu(x)
             if i == 1:
                 x = F.average_pooling_2d(x, (2,2))
         # fc
