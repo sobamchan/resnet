@@ -15,19 +15,19 @@ class PlainCNN(sobamchan_chainer.Model):
         input_channel = 3
         # 32 layer
         for i in range(layer_i, layer_i+n*2+1):
-            modules += [('conv_{}'.format(layer_i), L.Convolution2D(input_channel, 32, ksize=(3,3), stride=2, pad=4))]
+            modules += [('conv_{}'.format(layer_i), L.Convolution2D(input_channel, 32, ksize=(3,3), stride=1, pad=1))]
             modules += [('bnorm_{}'.format(layer_i), L.BatchNormalization(32))]
             input_channel = 32
             layer_i += 1
         # 16 layer
         for i in range(layer_i, layer_i+n*2):
-            modules += [('conv_{}'.format(layer_i), L.Convolution2D(input_channel, 16, ksize=(3,3), stride=2, pad=4))]
+            modules += [('conv_{}'.format(layer_i), L.Convolution2D(input_channel, 16, ksize=(3,3), stride=1, pad=1))]
             modules += [('bnorm_{}'.format(layer_i), L.BatchNormalization(16))]
             input_channel = 16
             layer_i += 1
         # 8 layer
         for i in range(layer_i, layer_i+n*2):
-            modules += [('conv_{}'.format(layer_i), L.Convolution2D(input_channel, 8, ksize=(3,3), stride=2, pad=4))]
+            modules += [('conv_{}'.format(layer_i), L.Convolution2D(input_channel, 8, ksize=(3,3), stride=1, pad=1))]
             modules += [('bnorm_{}'.format(layer_i), L.BatchNormalization(8))]
             input_channel = 8
             layer_i += 1
