@@ -83,7 +83,6 @@ class ResNet(sobamchan_chainer.Model):
                 x = F.max_pooling_2d(x, (2,2), stride=1)
             if i == 9:
                 x = F.max_pooling_2d(x, (2,2), stride=2)
-            print(x.shape)
 
         x = F.average_pooling_2d(x, (2,2), stride=1)
         # fc
