@@ -55,7 +55,6 @@ class ResNet(sobamchan_chainer.Model):
             if j == 3:
                 self.pooling_layer.append(layer_i)
             layer_i += 1                
-
         # 64 layer
         initial_layer_i = layer_i
         for j, i in enumerate(range(layer_i, layer_i+n*2)):
