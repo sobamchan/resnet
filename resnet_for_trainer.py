@@ -75,6 +75,7 @@ class ResNet(sobamchan_chainer.Model):
     def fwd(self, x):
         # convs and bns
         for i in range(1, self.layer_n-1):
+            x = self['resblock_{}'.format(i)](x)
             if i == 1:
                 x = F.max_pooling_2d(x, (2,2), stride=1)
 
