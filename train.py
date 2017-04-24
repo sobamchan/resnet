@@ -93,7 +93,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
             x = model.prepare_input(x, dtype=xp.float32, xp=xp)
             t = model.prepare_input(t, dtype=xp.int32, xp=xp)
             model.cleargrads()
-            loss, acc = model(x, t, train=False)
+            loss, acc = model(x, t)
             loss.to_cpu()
             acc.to_cpu()
             sum_loss += loss.data * x_len
