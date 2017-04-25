@@ -16,14 +16,13 @@ class ResBlock(sobamchan_chainer.Model):
             bn2=L.BatchNormalization(out_channels),
         )
 
-
     def __call__(self, x):
         h = self.fwd(x)
         return h
 
     def fwd(self, x):
         h = F.relu(self.bn1((self.conv1(x))))
-        h = F.relu(self.bn2((self.conv2(h))))
+        h = self.bn2((self.conv2(h)))
         _, x_channels, x_h, x_w = x.shape
         h_batch_size, h_channels, h_h, h_w = h.shape
         if x_channels != h_channels:
@@ -43,6 +42,7 @@ class ResNet(sobamchan_chainer.Model):
         self.pooling_layer = []        
         input_channel = 3
         # 16 layer, 32 * 32 output map size
+        initial_layer_i = layer_i
         for i in range(layer_i, layer_i+n*2+1):
             modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 16, stride=1))]
             input_channel = 16
@@ -50,18 +50,20 @@ class ResNet(sobamchan_chainer.Model):
         # 32 layer
         initial_layer_i = layer_i
         for j, i in enumerate(range(layer_i, layer_i+n*2)):
-            modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 32, stride=1))]
+            if i == initial_layer_i+n*2-1:
+                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 32, stride=2))]
+            else:
+                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 32, stride=1))]
             input_channel = 32
-            if j == 3:
-                self.pooling_layer.append(layer_i)
             layer_i += 1                
         # 64 layer
         initial_layer_i = layer_i
         for j, i in enumerate(range(layer_i, layer_i+n*2)):
-            modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 64, stride=1))]
+            if i == initial_layer_i+n*2-1:
+                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 64, stride=1))]
+            else:
+                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 64, stride=2))]
             input_channel = 64
-            if j == 3:
-                self.pooling_layer.append(layer_i)
             layer_i += 1
 
         modules += [('fc', L.Linear(None, 10))]
@@ -81,8 +83,6 @@ class ResNet(sobamchan_chainer.Model):
             x = self['resblock_{}'.format(i)](x)
             if i ==1 :
                 x = F.max_pooling_2d(x, (2,2), stride=1)
-            if i == 9:
-                x = F.max_pooling_2d(x, (2,2), stride=2)
 
         x = F.average_pooling_2d(x, (2,2), stride=1)
         # fc
