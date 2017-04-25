@@ -35,6 +35,13 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
     train_x = train_x.reshape(train_n, 3, 32, 32)
     test_x = test_x.reshape(test_n, 3, 32, 32)
 
+    slack.s_print('here we go', channel='output')
+    slack.s_print('train n: {}'.format(train_n), channel='output')
+    slack.s_print('test n: {}'.format(test_n), channel='output')
+    slack.s_print('epoch: {}'.format(epoch), channel='output')
+    slack.s_print('batch size: {}'.format(batch_size), channel='output')
+    slack.s_print('gpu: {}'.format(gpu), channel='output')
+
     train_x = np.subtract(train_x, np.mean(train_x, axis=0))
     test_x = np.subtract(test_x, np.mean(test_x, axis=0))
 
@@ -109,5 +116,7 @@ def train(model=model, gpu=None, epoch=10, batch_size=128):
     test_loss_log.save_graph('test_loss.log.png')
     test_acc_log.save('test_acc.log')
     test_acc_log.save_graph('test_acc.log.png')
+
+    model.save_model()
 
 fire.Fire()
