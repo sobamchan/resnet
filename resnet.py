@@ -30,6 +30,8 @@ class ResBlock(sobamchan_chainer.Model):
             if np.ndarray is not type(h.data):
                 pad.to_gpu()
             x = F.concat((x, pad))
+        if x_h != h_h:
+            x = F.max_pooling_2d(x, ksize=2, stride=2)
         return h + x
 
 class ResNet(sobamchan_chainer.Model):
@@ -47,7 +49,7 @@ class ResNet(sobamchan_chainer.Model):
             modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 16, stride=1))]
             input_channel = 16
             layer_i += 1
-        # 32 layer
+        # 32 layer, 16 output map size
         initial_layer_i = layer_i
         for j, i in enumerate(range(layer_i, layer_i+n*2)):
             if i == initial_layer_i+n*2-1:
@@ -56,13 +58,13 @@ class ResNet(sobamchan_chainer.Model):
                 modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 32, stride=1))]
             input_channel = 32
             layer_i += 1                
-        # 64 layer
+        # 64 layer, 8 output map size
         initial_layer_i = layer_i
         for j, i in enumerate(range(layer_i, layer_i+n*2)):
             if i == initial_layer_i+n*2-1:
-                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 64, stride=1))]
+                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 64, stride=2))]                
             else:
-                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 64, stride=2))]
+                modules += [('resblock_{}'.format(layer_i), ResBlock(input_channel, 64, stride=1))]
             input_channel = 64
             layer_i += 1
 
@@ -79,7 +81,7 @@ class ResNet(sobamchan_chainer.Model):
 
     def fwd(self, x):
         # convs and bns
-        for i in range(1, self.layer_n-1):
+        for i in range(1, self.layer_n):
             x = self['resblock_{}'.format(i)](x)
             if i ==1 :
                 x = F.max_pooling_2d(x, (2,2), stride=1)
